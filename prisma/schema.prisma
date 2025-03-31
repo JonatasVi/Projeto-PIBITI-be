@@ -19,9 +19,17 @@ model Usuario {
   email String @unique
   senha String
   cargo String?   
-  instituicaoAtual String?
-  instituicaoDestino String?
+  instituicaoAtual Int
+  instituicaoDestino Int[]
   aceitaPerto  Boolean?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt      // data da atualizacao do usuario
+}
+
+model instituicao{
+  id Int @unique @id
+  nome String
+  municipio String
+  uf String
+  sigla String
 }

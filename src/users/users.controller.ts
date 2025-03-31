@@ -4,13 +4,14 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthsGuard } from 'src/auths/auths.guard';
 import { validate } from 'class-validator';
+import { Usuario } from '@prisma/client';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
   
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  create(@Body() createUserDto: CreateUserDto): Promise<Usuario> {
     return this.usersService.create(createUserDto);
   }
 
@@ -23,7 +24,7 @@ export class UsersController {
 
   @UseGuards(AuthsGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<Usuario | null> {
     return this.usersService.findOne(id);
   }
  
@@ -35,7 +36,7 @@ export class UsersController {
 
   @UseGuards(AuthsGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string): Promise<Usuario> {
     return this.usersService.remover(+id);
   }
 }
