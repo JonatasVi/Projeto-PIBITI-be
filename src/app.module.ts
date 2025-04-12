@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 import { PrismaService } from './database/prisma.service';
-import { UsersModule } from './users/users.module';
-import { AuthsModule } from './auths/auths.module';
-import { InstitutionsModule } from './institutions/institutions.module';
+import { UsuariosModule } from './usuarios/usuarios.module';
+import { AutorizacoesModule } from './autorizacoes/auths.module';
+import { InstituicoesModule } from './instituicoes/instituicoes.module';
+import { PermutacoesModule } from './permutacoes/permutacoes.module';
+
 
 @Module({
-  imports: [UsersModule, AuthsModule, InstitutionsModule],
+  imports: [UsuariosModule, AutorizacoesModule, InstituicoesModule, PermutacoesModule],
   providers: [PrismaService],
 })
 export class AppModule {}

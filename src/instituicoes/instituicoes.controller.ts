@@ -1,16 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { InstitutionsService } from './institutions.service';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { InstituicoesService } from './instituicoes.service';
 import { CreateInstitutionDto } from './dto/create-institution.dto';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
 import { instituicao } from '@prisma/client';
+import { AuthsGuard } from 'src/autorizacoes/auths.guard';
 
-@Controller('institutions')
-export class InstitutionsController {
-  constructor(private readonly institutionsService: InstitutionsService) {}
+@Controller('instituicoes')
+@UseGuards(AuthsGuard)
+export class InstituicoesController {
+  constructor(private readonly institutionsService: InstituicoesService) {}
 
   @Post()
   create(@Body() instiuicao: CreateInstitutionDto): Promise<instituicao>{
-    return this.institutionsService.createInsitituicao(instiuicao);
+    return this.institutionsService.criarInsitituicao(instiuicao);
   }
 
   @Get()
@@ -28,4 +30,5 @@ export class InstitutionsController {
       return this.institutionsService.buscarIntituicaoUsuario(+id);
   
     }
+
 }

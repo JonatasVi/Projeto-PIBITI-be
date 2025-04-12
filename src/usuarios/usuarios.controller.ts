@@ -1,31 +1,29 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ValidationPipe, UsePipes } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UsuariosService } from './usuarios.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthsGuard } from 'src/auths/auths.guard';
-import { validate } from 'class-validator';
+import { AuthsGuard } from 'src/autorizacoes/auths.guard';
 import { Usuario } from '@prisma/client';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { IsEmail } from 'class-validator';
 
-@Controller('users')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+
+@UseGuards(AuthsGuard)
+@Controller('usuarios')
+export class UsuariosController {
+  constructor(private readonly usersService: UsuariosService) {}
   
-  @Post()
-  create(@Body() createUserDto: CreateUserDto): Promise<Usuario> {
-    return this.usersService.create(createUserDto);
-  }
 
-  @UseGuards(AuthsGuard)
   @Get()
   findAll() {
     return this.usersService.findAll();
   }
 
 
-  @UseGuards(AuthsGuard)
+
   @Get(':id')
   findOne(@Param('id') id: string): Promise<Usuario | null> {
-    return this.usersService.findOne(id);
+    return this.usersService.findOne(+id);
   }
  
 
@@ -34,9 +32,17 @@ export class UsersController {
     return this.usersService.update(+id, updateUserDto);
   }
 
-  @UseGuards(AuthsGuard)
+
+  @Get('email/:email')
+  buscarEmail(@Param('email') email: string): Promise<Usuario | null> {
+    return this.usersService.buscarEmail(email);
+  }
+
+
   @Delete(':id')
   remove(@Param('id') id: string): Promise<Usuario> {
     return this.usersService.remover(+id);
   }
+
+  
 }

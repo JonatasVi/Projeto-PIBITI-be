@@ -3,6 +3,14 @@ import {IsString, IsEmail, MinLength, IsArray, IsNumber } from 'class-validator'
 
 export class CreateUserDto {
     @ApiProperty({
+        description: 'Nome do usuario',
+        example: 'Fulano'
+    })
+    @IsString()
+    nome: string
+
+    
+    @ApiProperty({
         description: 'E-mail que sera usado para login',
         example: 'usuario@gmail.com'
     })
@@ -22,7 +30,7 @@ export class CreateUserDto {
         example: 'Tecnico de Laboratorio'
     })
     @IsString()
-    cargo?: string
+    cargo: string
 
     @ApiProperty({
         description: 'Aqui reference a instituicao atual do usuario',

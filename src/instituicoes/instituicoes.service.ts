@@ -3,16 +3,16 @@ import { CreateInstitutionDto } from './dto/create-institution.dto';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
 import { PrismaService } from 'src/database/prisma.service';
 import { instituicao } from '@prisma/client';
-import { AuthsGuard } from 'src/auths/auths.guard';
+import { AuthsGuard } from 'src/autorizacoes/auths.guard';
 
 
 
 @Injectable()
-export class InstitutionsService {
+export class InstituicoesService {
   constructor(private readonly prisma: PrismaService){}
    
   @UseGuards(AuthsGuard)
-  async createInsitituicao(instituicao: CreateInstitutionDto): Promise<instituicao> {
+  async criarInsitituicao(instituicao: CreateInstitutionDto): Promise<instituicao> {
     return this.prisma.instituicao.create({
       data: instituicao
     })
