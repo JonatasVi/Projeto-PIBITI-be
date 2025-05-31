@@ -2,10 +2,12 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 import { InstituicoesService } from './instituicoes.service';
 import { CreateInstitutionDto } from './dto/create-institution.dto';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
-import { instituicao } from '@prisma/client';
+import { instituicao, usuario } from '@prisma/client';
 import { AuthsGuard } from 'src/autorizacoes/auths.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('instituicoes')
+@ApiBearerAuth()
 @UseGuards(AuthsGuard)
 export class InstituicoesController {
   constructor(private readonly institutionsService: InstituicoesService) {}
@@ -21,14 +23,20 @@ export class InstituicoesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<instituicao | null> {
     return this.institutionsService.findOne(+id);
   }
 
-  @Get('/instituicao/:id')
-  InstitutionUser(@Param('id') id: string) {
-      return this.institutionsService.buscarIntituicaoUsuario(+id);
-  
-    }
+  @Get('instituicaoUsuario/:id')
+  instituicaoUsuario(@Param('id') id: string){
+    return this.institutionsService.instituicaoUsuario(+id);
+  }
+
+
+  @Get('instituicaoUsuarioDestino/:id')
+  instituicaoUsuarioDestino(@Param('id') id: string){
+    return this.institutionsService.instituicaoUsuarioDestino(+id);
+  }
+
 
 }

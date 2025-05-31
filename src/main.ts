@@ -5,19 +5,20 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors(); 
-  app.useGlobalPipes(new ValidationPipe())
-  const config = new DocumentBuilder()
-  .setTitle('PIBITI')
-  .setDescription('descricao da api do projeto pibit')
-  .setVersion('1.0')
-  .addTag('PIBITI')
-  .addBearerAuth()
-  .build();
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
   
+  app.enableCors();
+  app.useGlobalPipes(new ValidationPipe());
 
-  await app.listen(process.env.PORT ?? 3000); 
+  const config = new DocumentBuilder()
+    .setTitle('PIBITI')
+    .setDescription('Descrição da API do projeto PIBIT')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

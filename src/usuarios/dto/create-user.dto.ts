@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import {IsString, IsEmail, MinLength, IsArray, IsNumber } from 'class-validator'
+import {IsString, IsEmail, MinLength, IsArray, IsNumber, IsOptional } from 'class-validator'
 
 export class CreateUserDto {
     @ApiProperty({
@@ -37,14 +37,19 @@ export class CreateUserDto {
         example: '1' //se refere ao id da instituicao
     })
     @IsNumber()
-    instituicaoAtual: number
+    @IsOptional()
+    instituicaoAtual?: number
 
     @ApiProperty({
         description: 'Aqui reference as instituicoes de destino do usuario que no caso e um array de numero que corresponderar com os ids da instituicoes',
         example: [] //aqui vai os ids das instituicoes
     })
     @IsArray()
-    instituicaoDestino?: number[] 
+    @IsOptional()
+    instituicaoDestino: number[]
+
+    @IsOptional()
+    aceitaPerto: boolean
 
 }
 

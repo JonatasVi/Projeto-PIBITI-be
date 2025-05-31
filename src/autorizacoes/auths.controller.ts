@@ -16,7 +16,7 @@ export class AutorizacoesController {
 
   @Post('/register/')
   registrar(@Body () usuario: CreateUserDto){
-    return this.autorizacoesService.register(usuario);
+    return this.autorizacoesService.criarUsuario(usuario);
   }
 
 

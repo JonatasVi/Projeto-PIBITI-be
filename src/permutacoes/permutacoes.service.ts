@@ -1,36 +1,53 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { CreatePermutacoeDto } from './dto/create-permutacoe.dto';
-import { UpdatePermutacoeDto } from './dto/update-permutacoe.dto';
 import { PrismaService } from 'src/database/prisma.service';
 
 @Injectable()
 export class PermutacoesService {
   constructor(private readonly prisma: PrismaService){}
 
-  async permutacaoUsuario(id: number){
+  
+  async permutacaoUsuario(id: number) {
     const usuarioId = await this.prisma.usuario.findUnique({
-      where: {id}
+      where: { id },
+      include: {
+        instituicao: true
+      }
     });
 
-    if(!usuarioId){
-      throw new UnauthorizedException()
+    if (!usuarioId) {
+      throw new UnauthorizedException();
+    }
+
+    const instituicaoDest: number[] = usuarioId.instituicao
+      .map(dest => dest.instituicaoId)
+      .filter((id): id is number => id !== null);
+
+
+    if (!usuarioId.instituicaoAtual) {
+      return [];
     }
 
     return this.prisma.usuario.findMany({
       where: {
         instituicaoAtual: {
-          in: usuarioId.instituicaoDestino  
+          in: instituicaoDest
         },
-        instituicaoDestino: {
-          has: usuarioId.instituicaoAtual  
+        instituicao: {
+          some: {
+            instituicaoId: usuarioId.instituicaoAtual
+          }
         },
-        cargo: usuarioId.cargo
-      },
-      select: {
-        id: true
+        NOT: {
+          id: id
+        }
       }
-      
     });
-
-  }
 }
+
+    
+
+  
+  }
+
+  
+

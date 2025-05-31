@@ -1,14 +1,17 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsuariosService } from 'src/usuarios/usuarios.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/usuarios/dto/create-user.dto';
+import { PrismaService } from 'src/database/prisma.service';
+import { usuario } from '@prisma/client';
 
 @Injectable()
 export class AutorizacoesService {
   constructor(
     private usersService: UsuariosService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private prisma: PrismaService
   ) {}
 
   async signIn(
@@ -18,27 +21,39 @@ export class AutorizacoesService {
     const usuario = await this.usersService.buscarEmail(email);
    
     
-    if (!usuario || !(await bcrypt.compare(pass, usuario.senha))) {
-      throw new UnauthorizedException();
+    if (!usuario) {
+      throw new UnauthorizedException('Credenciais inválidas');
+    }
+  
+    const isPasswordValid = await bcrypt.compare(pass, usuario.senha);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Credenciais inválidas');
     }
 
-    const payload = { sub: usuario.email, id: usuario.id, nome: usuario.nome };
+    const payload = { id: usuario.id, nome: usuario.nome };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
     
   }
 
-  async register(usuario: CreateUserDto) {
-    const hashedPassword = await bcrypt.hash(
-      usuario.senha,
-      bcrypt.genSaltSync(),
-    );
-    const user = await this.usersService.criarUsuario({
-      ...usuario,
-      senha: hashedPassword,
-    });
-    return user;
-  }
+  async criarUsuario(usuario: CreateUserDto): Promise<usuario> {
+     const checkEmail = await this.usersService.buscarEmail(usuario.email);
+      
+      const salt = bcrypt.genSaltSync();
+      const hashPassword = await bcrypt.hash(usuario.senha,salt);
+      if(checkEmail){
+        throw new ConflictException('Email ja esta em uso')
+      }
+      return this.prisma.usuario.create({
+         data: {
+          nome: usuario.nome,
+          email: usuario.email,
+          senha: hashPassword,
+          cargo: usuario.cargo,
+    }
+  })
+    }
 
-}
+  }
+  
