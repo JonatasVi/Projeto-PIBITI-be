@@ -3,11 +3,9 @@ import { UsuariosService } from './usuarios.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthsGuard } from 'src/autorizacoes/auths.guard';
-import { usuario } from '@prisma/client';
+import { Usuario } from '@prisma/client'; // Corrigido de 'usuario' para 'Usuario'
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { IsEmail } from 'class-validator';
-
-
 
 @Controller('usuarios')
 @ApiBearerAuth()
@@ -21,7 +19,7 @@ export class UsuariosController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<usuario | null> {
+  findOne(@Param('id') id: string): Promise<Usuario | null> { // Corrigido o tipo
     return this.usersService.findOne(+id);
   }
  
@@ -31,14 +29,12 @@ export class UsuariosController {
   }
 
   @Get('email/:email')
-  buscarEmail(@Param('email') email: string): Promise<usuario | null> {
+  buscarEmail(@Param('email') email: string): Promise<Usuario | null> { // Corrigido o tipo
     return this.usersService.buscarEmail(email);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<usuario> {
+  remove(@Param('id') id: string): Promise<Usuario> { // Corrigido o tipo
     return this.usersService.remover(+id);
   }
-
-  
 }

@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 import { InstituicoesService } from './instituicoes.service';
 import { CreateInstitutionDto } from './dto/create-institution.dto';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
-import { instituicao, usuario } from '@prisma/client';
+import { Instituicao, Usuario } from '@prisma/client'; // Corrigido aqui
 import { AuthsGuard } from 'src/autorizacoes/auths.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
@@ -13,7 +13,7 @@ export class InstituicoesController {
   constructor(private readonly institutionsService: InstituicoesService) {}
 
   @Post()
-  create(@Body() instiuicao: CreateInstitutionDto): Promise<instituicao>{
+  create(@Body() instiuicao: CreateInstitutionDto): Promise<Instituicao> { // Corrigido aqui
     return this.institutionsService.criarInsitituicao(instiuicao);
   }
 
@@ -23,20 +23,17 @@ export class InstituicoesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<instituicao | null> {
+  findOne(@Param('id') id: string): Promise<Instituicao | null> { // Corrigido aqui
     return this.institutionsService.findOne(+id);
   }
 
   @Get('instituicaoUsuario/:id')
-  instituicaoUsuario(@Param('id') id: string){
+  instituicaoUsuario(@Param('id') id: string) {
     return this.institutionsService.instituicaoUsuario(+id);
   }
 
-
   @Get('instituicaoUsuarioDestino/:id')
-  instituicaoUsuarioDestino(@Param('id') id: string){
+  instituicaoUsuarioDestino(@Param('id') id: string) {
     return this.institutionsService.instituicaoUsuarioDestino(+id);
   }
-
-
 }

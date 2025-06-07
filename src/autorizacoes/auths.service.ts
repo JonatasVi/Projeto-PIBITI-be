@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/usuarios/dto/create-user.dto';
 import { PrismaService } from 'src/database/prisma.service';
-import { usuario } from '@prisma/client';
+import { Usuario } from '@prisma/client'; // Alterado de 'usuario' para 'Usuario'
 
 @Injectable()
 export class AutorizacoesService {
@@ -37,7 +37,7 @@ export class AutorizacoesService {
     
   }
 
-  async criarUsuario(usuario: CreateUserDto): Promise<usuario> {
+  async criarUsuario(usuario: CreateUserDto): Promise<Usuario> { // Alterado o tipo de retorno
      const checkEmail = await this.usersService.buscarEmail(usuario.email);
       
       const salt = bcrypt.genSaltSync();
@@ -54,6 +54,4 @@ export class AutorizacoesService {
     }
   })
     }
-
-  }
-  
+}

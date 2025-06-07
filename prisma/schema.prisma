@@ -7,34 +7,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model usuario {
-  id               Int                  @id @default(autoincrement())
+model Usuario {
+  id               Int                   @id @default(autoincrement())
   nome             String
-  email            String               @unique
+  email            String                @unique
   senha            String
-  cargo            String
-  instituicaoAtual Int?
-  aceitaPerto      Boolean?
-  createdAt        DateTime             @default(now())
-  updatedAt        DateTime             @updatedAt
-  instituicao      instituicaoDestino[]
+  cargo            String                @default("usuario")
+  instituicaoAtual Int?                  @default(0) // Alterado para Int com valor padrão 0
+  aceitaPerto      Boolean?              @default(false)
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+  instituicao      InstituicaoDestino[]
 }
 
-model instituicao {
-  id        Int                  @id 
+model Instituicao {
+  id        Int                   @id 
   nome      String?
   municipio String?
   uf        String?
   sigla     String?
-  usuario   instituicaoDestino[]
+  usuario   InstituicaoDestino[]
 }
 
-model instituicaoDestino {
-  id Int @id @default(autoincrement())
-  usuarioId     Int
-  instituicaoId Int?
-  instituicao   instituicao? @relation(fields: [instituicaoId], references: [id])
-  usuario       usuario     @relation(fields: [usuarioId], references: [id])
+model InstituicaoDestino {
+  id             Int          @id @default(autoincrement())
+  usuarioId      Int
+  instituicaoId  Int?
+  instituicao    Instituicao? @relation(fields: [instituicaoId], references: [id])
+  usuario        Usuario      @relation(fields: [usuarioId], references: [id])
 }
-
-
