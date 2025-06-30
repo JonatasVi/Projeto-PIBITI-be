@@ -12,7 +12,7 @@ export class PermutacoesController {
   constructor(private readonly permutacoesService: PermutacoesService) {}
 
   
-  @Get('/permutacao/:id')
+  @Get(':id')
   permutacaoUsuario(@Param('id') id: string){
     return this.permutacoesService.permutacaoUsuario(+id);
   }
