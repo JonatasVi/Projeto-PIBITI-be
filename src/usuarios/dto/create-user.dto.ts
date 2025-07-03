@@ -50,6 +50,9 @@ export class CreateUserDto {
 
     @IsOptional()
     aceitaPerto: boolean
+    @IsOptional()
+  @IsString()
+  perfilimage?: string;
 
 }
 

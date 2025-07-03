@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ValidationPipe, UsePipes } from '@nestjs/common';
+import { Controller, Get,Put, Post, Body, Patch, Param, Delete, UseGuards, ValidationPipe, UsePipes, UploadedFile, UseInterceptors, ParseIntPipe, Res, NotFoundException, BadRequestException } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -6,12 +6,16 @@ import { AuthsGuard } from 'src/autorizacoes/auths.guard';
 import { usuario } from '@prisma/client';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { IsEmail } from 'class-validator';
+import { extname } from 'path';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Response } from 'express';
+import multer, { memoryStorage } from 'multer';
+
 
 
 
 @Controller('usuarios')
-@ApiBearerAuth()
-@UseGuards(AuthsGuard)
+
 export class UsuariosController {
   constructor(private readonly usersService: UsuariosService) {}
   
@@ -40,5 +44,41 @@ export class UsuariosController {
     return this.usersService.remover(+id);
   }
 
-  
+  @Post(':id/upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: memoryStorage(),
+      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+      fileFilter: (req, file, cb) => {
+        if (!file.mimetype.match(/^image\/(jpeg|png|jpg)$/)) {
+          cb(new BadRequestException('Apenas arquivos de imagem são permitidos!'), false);
+        } else {
+          cb(null, true);
+        }
+      },
+    }),
+  )
+  async uploadFoto(
+    @Param('id', ParseIntPipe) id: number,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException('Nenhum arquivo enviado');
+    }
+
+    await this.usersService.uploadProfileImage(id, file.buffer);
+    return { message: 'Imagem enviada com sucesso!' };
+  }
+
+  @Get(':id/foto')
+  async getImagem(
+    @Param('id', ParseIntPipe) id: number,
+    @Res() res: Response,
+  ) {
+    const imagem = await this.usersService.getProfileImage(id);
+    if (!imagem) throw new NotFoundException('Imagem não encontrada');
+
+    res.setHeader('Content-Type', 'image/jpeg'); // ou image/png
+    res.send(imagem);
+  }
 }
