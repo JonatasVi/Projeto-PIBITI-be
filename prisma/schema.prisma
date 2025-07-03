@@ -18,6 +18,7 @@ model usuario {
   createdAt        DateTime             @default(now())
   updatedAt        DateTime             @updatedAt
   instituicao      instituicaoDestino[]
+  imagePerfil Bytes?        
 }
 
 model instituicao {
@@ -36,5 +37,7 @@ model instituicaoDestino {
   instituicao   instituicao? @relation(fields: [instituicaoId], references: [id])
   usuario       usuario     @relation(fields: [usuarioId], references: [id])
 }
+
+
 
 

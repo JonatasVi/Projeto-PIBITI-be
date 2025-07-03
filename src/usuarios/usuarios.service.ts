@@ -3,6 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/database/prisma.service';
 import { usuario } from '@prisma/client';
+import { Response } from 'express';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -55,4 +56,23 @@ export class UsuariosService {
       where: {id}
     });
   }
+
+
+  async uploadProfileImage(userId: number, imageBuffer: Buffer) {
+    return this.prisma.usuario.update({
+      where: { id: userId },
+      data: {
+        imagePerfil: imageBuffer,
+      },
+    });
+  }
+
+  async getProfileImage(userId: number) {
+    const user = await this.prisma.usuario.findUnique({
+      where: { id: userId },
+      select: { imagePerfil: true },
+    });
+    return user?.imagePerfil ?? null;
+  }
+   
 }
