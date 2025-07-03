@@ -54,9 +54,10 @@ pids
 *.seed
 *.pid.lock
 
-#arquivosque acho necessario tirar
+#arquivos que acho necessario tirar
 *.spec.ts
 *.spec.js
+package-lock.json
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
