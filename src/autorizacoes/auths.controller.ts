@@ -1,13 +1,14 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, UnauthorizedException } from '@nestjs/common';
 import { AutorizacoesService } from './auths.service';
-import { LoginDto } from './dto/create-auth.dto';
-import { CreateUserDto } from 'src/usuarios/dto/create-user.dto';
+import { LoginDto } from './auths.dto';
+import { CreateUserDto } from 'src/usuarios/usuarios.dto';
 
 
 @Controller('autorizacoes')
 export class AutorizacoesController {
   constructor(private readonly autorizacoesService: AutorizacoesService) {}
 
+  
   @Post('login')
   @HttpCode(HttpStatus.OK)
   signIn(@Body () loginDto: LoginDto){

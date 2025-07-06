@@ -2,7 +2,7 @@ import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/co
 import { UsuariosService } from 'src/usuarios/usuarios.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from 'src/usuarios/dto/create-user.dto';
+import { CreateUserDto } from 'src/usuarios/usuarios.dto';
 import { PrismaService } from 'src/database/prisma.service';
 import { usuario } from '@prisma/client';
 

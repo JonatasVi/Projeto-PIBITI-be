@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './usuarios.dto';
+import { UpdateUserDto } from './usuarios-update.dto';
 import { PrismaService } from 'src/database/prisma.service';
 import { usuario } from '@prisma/client';
 import { Response } from 'express';

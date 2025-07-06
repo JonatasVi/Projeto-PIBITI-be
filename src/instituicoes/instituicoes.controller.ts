@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { InstituicoesService } from './instituicoes.service';
-import { CreateInstitutionDto } from './dto/create-institution.dto';
-import { UpdateInstitutionDto } from './dto/update-institution.dto';
+import { CreateInstitutionDto } from './instituicoes.dto';
+import { UpdateInstitutionDto } from './instituicao-update.dto';
 import { instituicao, usuario } from '@prisma/client';
 import { AuthsGuard } from 'src/autorizacoes/auths.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';

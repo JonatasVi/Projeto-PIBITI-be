@@ -1,21 +1,18 @@
 import { Controller, Get,Put, Post, Body, Patch, Param, Delete, UseGuards, ValidationPipe, UsePipes, UploadedFile, UseInterceptors, ParseIntPipe, Res, NotFoundException, BadRequestException } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from './usuarios-update.dto';
 import { AuthsGuard } from 'src/autorizacoes/auths.guard';
 import { usuario } from '@prisma/client';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { IsEmail } from 'class-validator';
-import { extname } from 'path';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
-import multer, { memoryStorage } from 'multer';
-
+import { memoryStorage } from 'multer';
 
 
 
 @Controller('usuarios')
-
+@ApiBearerAuth()
+@UseGuards(AuthsGuard)
 export class UsuariosController {
   constructor(private readonly usersService: UsuariosService) {}
   

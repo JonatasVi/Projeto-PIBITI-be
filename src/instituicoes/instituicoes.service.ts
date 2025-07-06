@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, UseGuards } from '@nestjs/common';
-import { CreateInstitutionDto } from './dto/create-institution.dto';
-import { UpdateInstitutionDto } from './dto/update-institution.dto';
+import { CreateInstitutionDto } from './instituicoes.dto';
+import { UpdateInstitutionDto } from './instituicao-update.dto';
 import { PrismaService } from 'src/database/prisma.service';
 import { instituicao } from '@prisma/client';
 import { AuthsGuard } from 'src/autorizacoes/auths.guard';
