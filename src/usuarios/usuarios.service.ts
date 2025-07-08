@@ -28,11 +28,12 @@ export class UsuariosService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<usuario | null> {
+    console.log('Recebido no update:', updateUserDto);
 
     // Verifica se está tentando atualizar o email
     if (updateUserDto.email) {
       const userWithSameEmail = await this.prisma.usuario.findUnique({
-        where: { email: updateUserDto.email }
+        where: { email: updateUserDto.email },
       });
 
       // Se encontrou um usuário com o mesmo email E não é o mesmo usuário
@@ -43,6 +44,7 @@ export class UsuariosService {
 
     const dataToUpdate: any = {};
 
+    // Adiciona os campos ao objeto de atualização se eles existirem no DTO
     if (updateUserDto.nome) {
       dataToUpdate.nome = updateUserDto.nome;
     }
@@ -52,6 +54,15 @@ export class UsuariosService {
     if (updateUserDto.cargo) {
       dataToUpdate.cargo = updateUserDto.cargo;
     }
+
+    // 👇 INÍCIO DA CORREÇÃO: Adicione estas verificações
+    if (updateUserDto.instituicaoAtual !== undefined) {
+      dataToUpdate.instituicaoAtual = updateUserDto.instituicaoAtual;
+    }
+    if (updateUserDto.aceitaPerto !== undefined) {
+      dataToUpdate.aceitaPerto = updateUserDto.aceitaPerto;
+    }
+    // 👆 FIM DA CORREÇÃO
 
     if (updateUserDto.senha) {
       const salt = await bcrypt.genSalt();
@@ -67,7 +78,6 @@ export class UsuariosService {
       data: dataToUpdate,
     });
   }
-
 
   async remover(id: number): Promise<usuario> {
     return this.prisma.usuario.delete({
