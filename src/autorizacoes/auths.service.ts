@@ -67,6 +67,8 @@ export class AutorizacoesService {
         nome: true,
         email: true,
         cargo: true,
+        instituicaoAtual: true,
+        aceitaPerto: true,  
         createdAt: true
       }
     });

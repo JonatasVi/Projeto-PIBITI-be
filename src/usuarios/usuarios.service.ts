@@ -28,6 +28,19 @@ export class UsuariosService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<usuario | null> {
+
+    // Verifica se está tentando atualizar o email
+    if (updateUserDto.email) {
+      const userWithSameEmail = await this.prisma.usuario.findUnique({
+        where: { email: updateUserDto.email }
+      });
+
+      // Se encontrou um usuário com o mesmo email E não é o mesmo usuário
+      if (userWithSameEmail && userWithSameEmail.id !== id) {
+        throw new ConflictException('Este email já está em uso por outro usuário');
+      }
+    }
+
     const dataToUpdate: any = {};
 
     if (updateUserDto.nome) {

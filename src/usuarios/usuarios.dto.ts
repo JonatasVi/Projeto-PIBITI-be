@@ -55,4 +55,3 @@ export class CreateUserDto {
   perfilimage?: string;
 
 }
-
