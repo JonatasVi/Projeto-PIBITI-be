@@ -1,21 +1,35 @@
-import { Controller, Get,Put, Post, Body, Patch, Param, Delete, UseGuards, ValidationPipe, UsePipes, UploadedFile, UseInterceptors, ParseIntPipe, Res, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Put,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  ParseIntPipe,
+  Res,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { UpdateUserDto } from './usuarios-update.dto';
-import { AuthsGuard } from 'src/autorizacoes/auths.guard';
-import { usuario } from '@prisma/client';
+import { JwtAuthGuard } from '../autorizacoes/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { memoryStorage } from 'multer';
-
-
+import { usuario } from '@prisma/client';
+import { StreamableFile,  } from '@nestjs/common';
 
 @Controller('usuarios')
 @ApiBearerAuth()
-@UseGuards(AuthsGuard)
 export class UsuariosController {
   constructor(private readonly usersService: UsuariosService) {}
-  
+
   @Get()
   findAll() {
     return this.usersService.findAll();
@@ -25,8 +39,9 @@ export class UsuariosController {
   findOne(@Param('id') id: string): Promise<usuario | null> {
     return this.usersService.findOne(+id);
   }
- 
-  @Patch(':id')
+
+  @UseGuards(JwtAuthGuard)
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
   }
@@ -36,6 +51,7 @@ export class UsuariosController {
     return this.usersService.buscarEmail(email);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string): Promise<usuario> {
     return this.usersService.remover(+id);
@@ -70,12 +86,12 @@ export class UsuariosController {
   @Get(':id/foto')
   async getImagem(
     @Param('id', ParseIntPipe) id: number,
-    @Res() res: Response,
   ) {
     const imagem = await this.usersService.getProfileImage(id);
     if (!imagem) throw new NotFoundException('Imagem não encontrada');
 
-    res.setHeader('Content-Type', 'image/jpeg'); // ou image/png
-    res.send(imagem);
+    return new StreamableFile(imagem, {
+      type: 'image/jpeg',
+    });
   }
 }

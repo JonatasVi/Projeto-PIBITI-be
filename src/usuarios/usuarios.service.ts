@@ -28,25 +28,30 @@ export class UsuariosService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<usuario | null> {
+    const dataToUpdate: any = {};
 
+    if (updateUserDto.nome) {
+      dataToUpdate.nome = updateUserDto.nome;
+    }
+    if (updateUserDto.email) {
+      dataToUpdate.email = updateUserDto.email;
+    }
+    if (updateUserDto.cargo) {
+      dataToUpdate.cargo = updateUserDto.cargo;
+    }
+
+    if (updateUserDto.senha) {
+      const salt = await bcrypt.genSalt();
+      dataToUpdate.senha = await bcrypt.hash(updateUserDto.senha, salt);
+    }
+
+    if (Object.keys(dataToUpdate).length === 0) {
+      return this.prisma.usuario.findUnique({ where: { id } });
+    }
 
     return this.prisma.usuario.update({
       where: { id },
-      data: {
-        nome: updateUserDto.nome,
-        cargo: updateUserDto.cargo,
-        email: updateUserDto.email,
-        senha: updateUserDto.senha, 
-        instituicaoAtual: updateUserDto.instituicaoAtual,
-        aceitaPerto: updateUserDto.aceitaPerto,
-        instituicao: {
-          create: updateUserDto.instituicaoDestino?.map(id => ({
-            instituicao: {
-              connect: { id }
-            }
-          }))
-        }
-      }
+      data: dataToUpdate,
     });
   }
 

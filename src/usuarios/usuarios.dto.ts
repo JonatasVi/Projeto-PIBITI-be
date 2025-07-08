@@ -34,7 +34,7 @@ export class CreateUserDto {
 
     @ApiProperty({
         description: 'Aqui reference a instituicao atual do usuario',
-        example: '1' //se refere ao id da instituicao
+        example: '1'
     })
     @IsNumber()
     @IsOptional()
@@ -42,7 +42,7 @@ export class CreateUserDto {
 
     @ApiProperty({
         description: 'Aqui reference as instituicoes de destino do usuario que no caso e um array de numero que corresponderar com os ids da instituicoes',
-        example: [] //aqui vai os ids das instituicoes
+        example: []
     })
     @IsArray()
     @IsOptional()

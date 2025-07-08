@@ -17,10 +17,9 @@ export class AutorizacoesService {
   async signIn(
     email: string,
     pass: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ access_token: string; nome: string; id: number; email: string; senha: string }> {
     const usuario = await this.usersService.buscarEmail(email);
    
-    
     if (!usuario) {
       throw new UnauthorizedException('Credenciais inválidas');
     }
@@ -33,27 +32,43 @@ export class AutorizacoesService {
     const payload = { id: usuario.id, nome: usuario.nome };
     return {
       access_token: await this.jwtService.signAsync(payload),
+      nome: usuario.nome,
+      id: usuario.id,
+      email: usuario.email,
+      senha: pass 
     };
-    
   }
 
   async criarUsuario(usuario: CreateUserDto): Promise<usuario> {
-     const checkEmail = await this.usersService.buscarEmail(usuario.email);
+    const checkEmail = await this.usersService.buscarEmail(usuario.email);
       
-      const salt = bcrypt.genSaltSync();
-      const hashPassword = await bcrypt.hash(usuario.senha,salt);
-      if(checkEmail){
-        throw new ConflictException('Email ja esta em uso')
+    const salt = bcrypt.genSaltSync();
+    const hashPassword = await bcrypt.hash(usuario.senha, salt);
+    
+    if (checkEmail) {
+      throw new ConflictException('Email já está em uso');
+    }
+    
+    return this.prisma.usuario.create({
+      data: {
+        nome: usuario.nome,
+        email: usuario.email,
+        senha: hashPassword,
+        cargo: usuario.cargo,
       }
-      return this.prisma.usuario.create({
-         data: {
-          nome: usuario.nome,
-          email: usuario.email,
-          senha: hashPassword,
-          cargo: usuario.cargo,
-    }
-  })
-    }
-
+    });
   }
-  
+
+  async getUserProfileById(id: number) {
+    return this.prisma.usuario.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        cargo: true,
+        createdAt: true
+      }
+    });
+  }
+}

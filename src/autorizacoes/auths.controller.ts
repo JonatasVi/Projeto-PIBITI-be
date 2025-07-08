@@ -1,7 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, UnauthorizedException } from '@nestjs/common';
+import { 
+  Controller, 
+  Get, 
+  Post, 
+  Body, 
+  HttpCode, 
+  HttpStatus, 
+  UnauthorizedException, 
+  UseGuards, 
+  Req 
+} from '@nestjs/common';
 import { AutorizacoesService } from './auths.service';
 import { LoginDto } from './auths.dto';
 import { CreateUserDto } from 'src/usuarios/usuarios.dto';
+import { JwtAuthGuard } from '../autorizacoes/jwt-auth.guard';
 
 
 @Controller('autorizacoes')
@@ -11,14 +22,24 @@ export class AutorizacoesController {
   
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  signIn(@Body () loginDto: LoginDto){
-    return this.autorizacoesService.signIn(loginDto.email,loginDto.senha)
+  signIn(@Body() loginDto: LoginDto) {
+    return this.autorizacoesService.signIn(loginDto.email, loginDto.senha);
   }
 
   @Post('/register/')
-  registrar(@Body () usuario: CreateUserDto){
+  registrar(@Body() usuario: CreateUserDto) {
     return this.autorizacoesService.criarUsuario(usuario);
   }
 
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async getMe(@Req() req) {
+    const usuario = await this.autorizacoesService.getUserProfileById(req.user.id);
 
+    if (!usuario) {
+      throw new UnauthorizedException('Usuário não encontrado');
+    }
+
+    return usuario;
+  }
 }
