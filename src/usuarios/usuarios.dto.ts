@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import {IsString, IsEmail, MinLength, IsArray, IsNumber, IsOptional } from 'class-validator'
+import {IsString, IsEmail, MinLength, IsArray, IsNumber, IsOptional, IsBoolean } from 'class-validator'
 
 export class CreateUserDto {
     @ApiProperty({
@@ -55,4 +55,3 @@ export class CreateUserDto {
   perfilimage?: string;
 
 }
-
