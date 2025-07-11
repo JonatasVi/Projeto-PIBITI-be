@@ -16,17 +16,18 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
-import { UpdateUserDto } from './usuarios-update.dto';
-import { JwtAuthGuard } from '../autorizacoes/jwt-auth.guard';
+import { UpdateUserDto } from './usuarios.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { memoryStorage } from 'multer';
 import { usuario } from '@prisma/client';
 import { StreamableFile,  } from '@nestjs/common';
+import { JwtAuthGuard } from '../autorizacoes/jwt-auth.guard';
 
 @Controller('usuarios')
 @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class UsuariosController {
   constructor(private readonly usersService: UsuariosService) {}
 
@@ -40,7 +41,6 @@ export class UsuariosController {
     return this.usersService.findOne(+id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Put(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
@@ -51,7 +51,6 @@ export class UsuariosController {
     return this.usersService.buscarEmail(email);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string): Promise<usuario> {
     return this.usersService.remover(+id);

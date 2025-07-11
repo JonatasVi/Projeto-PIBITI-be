@@ -1,6 +1,5 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { CreateUserDto } from './usuarios.dto';
-import { UpdateUserDto } from './usuarios-update.dto';
+import { CreateUserDto, UpdateUserDto } from './usuarios.dto';
 import { PrismaService } from 'src/database/prisma.service';
 import { usuario } from '@prisma/client';
 import { Response } from 'express';
@@ -11,7 +10,20 @@ export class UsuariosService {
   constructor(private readonly prisma: PrismaService){}
 
   async findAll() {
-    return this.prisma.usuario.findMany()
+     return this.prisma.usuario.findMany({
+		 select:{
+			 nome: true,
+			 email: true,
+			 senha: true,
+			 cargo: true,
+			 instituicao: true,
+			 instituicaoDestino: {
+				 include: {
+					 instituicao: true
+				 }
+			 }
+		 }
+		 });
   }
 
   async findOne(id: number): Promise<usuario | null> {
@@ -28,9 +40,8 @@ export class UsuariosService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<usuario | null> {
-    console.log('Recebido no update:', updateUserDto);
-
-    // Verifica se está tentando atualizar o email
+	  
+	  // Verifica se está tentando atualizar o email
     if (updateUserDto.email) {
       const userWithSameEmail = await this.prisma.usuario.findUnique({
         where: { email: updateUserDto.email },
@@ -42,42 +53,26 @@ export class UsuariosService {
       }
     }
 
-    const dataToUpdate: any = {};
-
-    // Adiciona os campos ao objeto de atualização se eles existirem no DTO
-    if (updateUserDto.nome) {
-      dataToUpdate.nome = updateUserDto.nome;
-    }
-    if (updateUserDto.email) {
-      dataToUpdate.email = updateUserDto.email;
-    }
-    if (updateUserDto.cargo) {
-      dataToUpdate.cargo = updateUserDto.cargo;
-    }
-
-    // 👇 INÍCIO DA CORREÇÃO: Adicione estas verificações
-    if (updateUserDto.instituicaoAtual !== undefined) {
-      dataToUpdate.instituicaoAtual = updateUserDto.instituicaoAtual;
-    }
-    if (updateUserDto.aceitaPerto !== undefined) {
-      dataToUpdate.aceitaPerto = updateUserDto.aceitaPerto;
-    }
-    // 👆 FIM DA CORREÇÃO
-
     if (updateUserDto.senha) {
       const salt = await bcrypt.genSalt();
-      dataToUpdate.senha = await bcrypt.hash(updateUserDto.senha, salt);
+      updateUserDto.senha = await bcrypt.hash(updateUserDto.senha, salt);
     }
-
-    if (Object.keys(dataToUpdate).length === 0) {
-      return this.prisma.usuario.findUnique({ where: { id } });
-    }
-
+    
     return this.prisma.usuario.update({
       where: { id },
-      data: dataToUpdate,
+      data: {
+        ...updateUserDto,
+        instituicaoDestino: {
+          create: updateUserDto.instituicaoDestino?.map(id => ({
+            instituicao: {
+              connect: { id }
+            }
+          }))
+        }
+      }
     });
   }
+
 
   async remover(id: number): Promise<usuario> {
     return this.prisma.usuario.delete({
