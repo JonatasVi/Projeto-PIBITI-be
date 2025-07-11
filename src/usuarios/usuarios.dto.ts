@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import {IsString, IsEmail, MinLength, IsArray, IsNumber, IsOptional, IsBoolean } from 'class-validator'
+import { PartialType } from '@nestjs/mapped-types';
 
 export class CreateUserDto {
     @ApiProperty({
@@ -9,7 +10,6 @@ export class CreateUserDto {
     @IsString()
     nome: string
 
-    
     @ApiProperty({
         description: 'E-mail que sera usado para login',
         example: 'usuario@gmail.com'
@@ -38,7 +38,7 @@ export class CreateUserDto {
     })
     @IsNumber()
     @IsOptional()
-    instituicaoAtual?: number
+    instituicaoId?: number
 
     @ApiProperty({
         description: 'Aqui reference as instituicoes de destino do usuario que no caso e um array de numero que corresponderar com os ids da instituicoes',
@@ -50,8 +50,14 @@ export class CreateUserDto {
 
     @IsOptional()
     aceitaPerto: boolean
+    
     @IsOptional()
-  @IsString()
-  perfilimage?: string;
+	 @IsString()
+	 perfilimage?: string;
 
 }
+
+export class UpdateUserDto extends PartialType(CreateUserDto) {
+  
+}
+

@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNumber, isString, IsString } from "class-validator";
+import { PartialType } from '@nestjs/mapped-types';
 
 export class CreateInstitutionDto {
     @ApiProperty({
@@ -37,6 +38,6 @@ export class CreateInstitutionDto {
     @IsString()
     sigla: string
 
-
-
 }
+
+export class UpdateInstitutionDto extends PartialType(CreateInstitutionDto) {}
