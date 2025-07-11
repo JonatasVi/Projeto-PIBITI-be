@@ -13,11 +13,12 @@ model usuario {
   email            String               @unique
   senha            String
   cargo            String
-  instituicaoAtual Int?
+  instituicaoId Int?
+  instituicao	 instituicao? @relation(fields: [instituicaoId], references: [id])
   aceitaPerto      Boolean?
   createdAt        DateTime             @default(now())
   updatedAt        DateTime             @updatedAt
-  instituicao      instituicaoDestino[]
+  instituicaoDestino      instituicaoDestino[]
   imagePerfil Bytes?        
 }
 
@@ -28,6 +29,7 @@ model instituicao {
   uf        String?
   sigla     String?
   usuario   instituicaoDestino[]
+  usuarios usuario[]
 }
 
 model instituicaoDestino {
@@ -37,7 +39,3 @@ model instituicaoDestino {
   instituicao   instituicao? @relation(fields: [instituicaoId], references: [id])
   usuario       usuario     @relation(fields: [usuarioId], references: [id])
 }
-
-
-
-
