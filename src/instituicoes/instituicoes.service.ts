@@ -7,8 +7,7 @@ import { AuthsGuard } from 'src/autorizacoes/auths.guard';
 @Injectable()
 export class InstituicoesService {
   constructor(private readonly prisma: PrismaService){}
-  
-  @UseGuards(AuthsGuard)
+
   async criarInsitituicao(instituicao: CreateInstitutionDto): Promise<instituicao> {
     return this.prisma.instituicao.create({
       data: instituicao
