@@ -62,15 +62,18 @@ export class AutorizacoesService {
   async getUserProfileById(id: number) {
     return this.prisma.usuario.findUnique({
       where: { id },
-      select: {
-        id: true,
-        nome: true,
-        email: true,
-        cargo: true,
-        instituicaoAtual: true,
-        aceitaPerto: true,  
-        createdAt: true
-      }
+      select:{
+			 nome: true,
+			 email: true,
+			 senha: true,
+			 cargo: true,
+			 instituicao: true,
+			 instituicaoDestino: {
+				 include: {
+					 instituicao: true
+				 }
+			 }
+		 },
     });
   }
 }

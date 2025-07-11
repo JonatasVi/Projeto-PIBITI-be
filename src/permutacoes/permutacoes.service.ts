@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { PrismaService } from 'src/database/prisma.service';
 
 @Injectable()
+
 export class PermutacoesService {
   constructor(private readonly prisma: PrismaService){}
 
@@ -10,7 +11,7 @@ export class PermutacoesService {
     const usuarioId = await this.prisma.usuario.findUnique({
       where: { id },
       include: {
-        instituicao: true
+        instituicaoDestino: true
       }
     });
 
@@ -18,36 +19,37 @@ export class PermutacoesService {
       throw new UnauthorizedException();
     }
 
-    const instituicaoDest: number[] = usuarioId.instituicao
+    const instituicaoDest: number[] = usuarioId.instituicaoDestino
       .map(dest => dest.instituicaoId)
       .filter((id): id is number => id !== null);
 
 
-    if (!usuarioId.instituicaoAtual) {
+    if (!usuarioId.instituicaoId) {
       return [];
     }
 
     return this.prisma.usuario.findMany({
       where: {
-        instituicaoAtual: {
+        instituicaoId: {
           in: instituicaoDest
         },
-        instituicao: {
+        instituicaoDestino: {
           some: {
-            instituicaoId: usuarioId.instituicaoAtual
+            instituicaoId: usuarioId.instituicaoId
           }
         },
         NOT: {
           id: id
         }
-      }
+      },
+      select:{
+			id: true,
+			nome: true,
+			instituicao: true
+		}
     });
+	}
 }
-
-    
-
-  
-  }
 
   
 
