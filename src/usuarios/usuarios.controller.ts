@@ -14,6 +14,7 @@ import {
   Res,
   NotFoundException,
   BadRequestException,
+  StreamableFile,
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { UpdateUserDto } from './usuarios.dto';
@@ -22,8 +23,11 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { memoryStorage } from 'multer';
 import { usuario } from '@prisma/client';
-import { StreamableFile,  } from '@nestjs/common';
 import { JwtAuthGuard } from '../autorizacoes/jwt-auth.guard';
+
+// Módulos nativos do Node.js
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Controller('usuarios')
 @ApiBearerAuth()
@@ -82,15 +86,34 @@ export class UsuariosController {
     return { message: 'Imagem enviada com sucesso!' };
   }
 
+  // O decorador @Header foi REMOVIDO daqui
   @Get(':id/foto')
   async getImagem(
     @Param('id', ParseIntPipe) id: number,
+    @Res({ passthrough: true }) res: Response, // Injeta a resposta para controle manual
   ) {
-    const imagem = await this.usersService.getProfileImage(id);
-    if (!imagem) throw new NotFoundException('Imagem não encontrada');
+    const imagemBuffer = await this.usersService.getProfileImage(id);
 
-    return new StreamableFile(imagem, {
-      type: 'image/jpeg',
-    });
+    // Se a imagem do usuário existir, define o header e a retorna
+    if (imagemBuffer) {
+      // Define o header SÓ AQUI, garantindo que o tipo corresponde ao corpo
+      res.setHeader('Content-Type', 'image/jpeg'); 
+      return new StreamableFile(imagemBuffer);
+    }
+
+    // Se a imagem NÃO existir, tenta retornar a imagem padrão
+    try {
+      const defaultImagePath = path.join(process.cwd(), 'src', 'assets', 'default-avatar.png');
+      const defaultImageBuffer = fs.readFileSync(defaultImagePath);
+
+      // Define o header para o tipo da imagem padrão
+      res.setHeader('Content-Type', 'image/png'); 
+      return new StreamableFile(defaultImageBuffer);
+
+    } catch (error) {
+      // Se nem a imagem padrão for encontrada, lança um erro.
+      // Como nenhum header foi setado, o NestJS usará o Content-Type de JSON padrão.
+      throw new NotFoundException('Imagem do usuário e imagem padrão não encontradas.');
+    }
   }
 }

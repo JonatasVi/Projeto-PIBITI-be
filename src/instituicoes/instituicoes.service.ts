@@ -15,7 +15,12 @@ export class InstituicoesService {
   }
 
   async findAll() {
-    return this.prisma.instituicao.findMany();
+    return this.prisma.instituicao.findMany({
+      select: {
+        id: true,
+        nome: true,
+      }
+    });
   }
 
   async findOne(id: number) {
