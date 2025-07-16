@@ -12,16 +12,17 @@ export class UsuariosService {
   async findAll() {
      return this.prisma.usuario.findMany({
 		 select:{
-			 nome: true,
-			 email: true,
-			 senha: true,
-			 cargo: true,
-			 instituicao: true,
-			 instituicaoDestino: {
-				 include: {
-					 instituicao: true
-				 }
-			 }
+        id: true,
+        nome: true,
+        email: true,
+        senha: true,
+        cargo: true,
+        instituicao: true,
+        instituicaoDestino: {
+          include: {
+            instituicao: true
+          }
+        }
 		 }
 		 });
   }
