@@ -25,7 +25,6 @@ import { memoryStorage } from 'multer';
 import { usuario } from '@prisma/client';
 import { JwtAuthGuard } from '../autorizacoes/jwt-auth.guard';
 
-// Módulos nativos do Node.js
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -86,33 +85,26 @@ export class UsuariosController {
     return { message: 'Imagem enviada com sucesso!' };
   }
 
-  // O decorador @Header foi REMOVIDO daqui
   @Get(':id/foto')
   async getImagem(
     @Param('id', ParseIntPipe) id: number,
-    @Res({ passthrough: true }) res: Response, // Injeta a resposta para controle manual
+    @Res({ passthrough: true }) res: Response, 
   ) {
     const imagemBuffer = await this.usersService.getProfileImage(id);
 
-    // Se a imagem do usuário existir, define o header e a retorna
     if (imagemBuffer) {
-      // Define o header SÓ AQUI, garantindo que o tipo corresponde ao corpo
       res.setHeader('Content-Type', 'image/jpeg'); 
       return new StreamableFile(imagemBuffer);
     }
 
-    // Se a imagem NÃO existir, tenta retornar a imagem padrão
     try {
       const defaultImagePath = path.join(process.cwd(), 'src', 'assets', 'default-avatar.png');
       const defaultImageBuffer = fs.readFileSync(defaultImagePath);
 
-      // Define o header para o tipo da imagem padrão
       res.setHeader('Content-Type', 'image/png'); 
       return new StreamableFile(defaultImageBuffer);
 
     } catch (error) {
-      // Se nem a imagem padrão for encontrada, lança um erro.
-      // Como nenhum header foi setado, o NestJS usará o Content-Type de JSON padrão.
       throw new NotFoundException('Imagem do usuário e imagem padrão não encontradas.');
     }
   }
