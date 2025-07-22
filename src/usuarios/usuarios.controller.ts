@@ -14,6 +14,7 @@ import {
   Res,
   NotFoundException,
   BadRequestException,
+  StreamableFile,
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { UpdateUserDto } from './usuarios.dto';
@@ -22,8 +23,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { memoryStorage } from 'multer';
 import { usuario } from '@prisma/client';
-import { StreamableFile,  } from '@nestjs/common';
 import { JwtAuthGuard } from '../autorizacoes/jwt-auth.guard';
+
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Controller('usuarios')
 @ApiBearerAuth()
@@ -85,12 +88,24 @@ export class UsuariosController {
   @Get(':id/foto')
   async getImagem(
     @Param('id', ParseIntPipe) id: number,
+    @Res({ passthrough: true }) res: Response, 
   ) {
-    const imagem = await this.usersService.getProfileImage(id);
-    if (!imagem) throw new NotFoundException('Imagem não encontrada');
+    const imagemBuffer = await this.usersService.getProfileImage(id);
 
-    return new StreamableFile(imagem, {
-      type: 'image/jpeg',
-    });
+    if (imagemBuffer) {
+      res.setHeader('Content-Type', 'image/jpeg'); 
+      return new StreamableFile(imagemBuffer);
+    }
+
+    try {
+      const defaultImagePath = path.join(process.cwd(), 'src', 'assets', 'default-avatar.png');
+      const defaultImageBuffer = fs.readFileSync(defaultImagePath);
+
+      res.setHeader('Content-Type', 'image/png'); 
+      return new StreamableFile(defaultImageBuffer);
+
+    } catch (error) {
+      throw new NotFoundException('Imagem do usuário e imagem padrão não encontradas.');
+    }
   }
 }
