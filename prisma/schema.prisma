@@ -19,8 +19,11 @@ model usuario {
   createdAt        DateTime             @default(now())
   updatedAt        DateTime             @updatedAt
   instituicaoDestino      instituicaoDestino[]
-  imagePerfil Bytes?        
-}
+  imagePerfil Bytes?
+  solicitacaoSolicitante solicitacao[] @relation("solicitacaoSolicitante")
+  solicitacaoAlvo solicitacao[]     @relation("solicitacaoAlvo")
+
+  }
 
 model instituicao {
   id        Int                  @id 
@@ -38,4 +41,21 @@ model instituicaoDestino {
   instituicaoId Int?
   instituicao   instituicao? @relation(fields: [instituicaoId], references: [id])
   usuario       usuario     @relation(fields: [usuarioId], references: [id])
+}
+
+
+model solicitacao{
+  id Int    @id @default(autoincrement())
+  status status? @default(Pendente)
+  createdAt        DateTime             @default(now())
+  usuarioSolicitante       usuario     @relation("solicitacaoSolicitante",fields: [usuarioId_solicitante], references: [id])
+  usuarioId_solicitante Int
+  usuarioAlvo       usuario     @relation("solicitacaoAlvo",fields: [usuarioId_alvo], references: [id])
+  usuarioId_alvo Int
+}
+
+enum status{
+  Pendente
+  Aceita
+  Rejeitada
 }

@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from './usuarios.dto';
 import { PrismaService } from 'src/database/prisma.service';
-import { usuario } from '@prisma/client';
+import { usuario, instituicaoDestino } from '@prisma/client';
 import { Response } from 'express';
 import * as bcrypt from 'bcrypt';
 
@@ -50,6 +50,16 @@ export class UsuariosService {
     if (updateUserDto.senha) {
       const salt = await bcrypt.genSalt();
       updateUserDto.senha = await bcrypt.hash(updateUserDto.senha, salt);
+    }
+
+    const instituicaoDestinot = updateUserDto.instituicaoDestino;
+
+    if(instituicaoDestinot!=undefined){
+     const teste = await this.prisma.instituicaoDestino.deleteMany({
+        where: {
+          usuarioId: id
+        }
+      })
     }
     
     return this.prisma.usuario.update({
