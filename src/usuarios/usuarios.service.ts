@@ -29,7 +29,6 @@ export class UsuariosService {
   }
 
   async buscarEmail(email: string): Promise<usuario | null> {
-   
     return this.prisma.usuario.findUnique({
       where: {email}
     });
@@ -37,6 +36,7 @@ export class UsuariosService {
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<usuario | null> {
     
+    // Validação de e-mail duplicado
     if (updateUserDto.email) {
       const userWithSameEmail = await this.prisma.usuario.findUnique({
         where: { email: updateUserDto.email },
@@ -47,32 +47,43 @@ export class UsuariosService {
       }
     }
 
-    if (updateUserDto.senha) {
+    // ✨ CORREÇÃO PRINCIPAL ✨
+    // Verifica se a senha foi enviada E se ela não é uma string vazia.
+    if (updateUserDto.senha && updateUserDto.senha.trim() !== '') {
+      // Se a senha for válida, criptografa.
       const salt = await bcrypt.genSalt();
       updateUserDto.senha = await bcrypt.hash(updateUserDto.senha, salt);
+    } else {
+      // Se a senha for vazia, nula ou undefined, REMOVE a propriedade do objeto.
+      // Isso impede que o Prisma tente atualizar a senha para um valor vazio.
+      delete updateUserDto.senha;
     }
 
     const instituicaoDestinot = updateUserDto.instituicaoDestino;
 
-    if(instituicaoDestinot!=undefined){
-     const teste = await this.prisma.instituicaoDestino.deleteMany({
+    // Se uma nova lista de instituições de destino foi enviada,
+    // remove as antigas primeiro.
+    if(instituicaoDestinot != undefined){
+      await this.prisma.instituicaoDestino.deleteMany({
         where: {
           usuarioId: id
         }
       })
     }
     
+    // Atualiza o usuário no banco de dados
     return this.prisma.usuario.update({
       where: { id },
       data: {
         ...updateUserDto,
-        instituicaoDestino: {
-          create: updateUserDto.instituicaoDestino?.map(id => ({
+        // Apenas tenta criar o relacionamento se a lista `instituicaoDestinot` for fornecida
+        instituicaoDestino: instituicaoDestinot ? { 
+          create: instituicaoDestinot.map(id => ({
             instituicao: {
               connect: { id }
             }
           }))
-        }
+        } : undefined // Se não for fornecida, não faz nada com o relacionamento
       }
     });
   }

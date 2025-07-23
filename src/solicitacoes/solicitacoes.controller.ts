@@ -31,6 +31,14 @@ export class SolicitacoesController {
     return this.solicitacoesService.update(+id, updateSolicitacoeDto);
   }
 
+  @Put('/desconfirmar/:solicitanteId/:alvoId')
+  desconfirmar(
+    @Param('solicitanteId') solicitanteId: string,
+    @Param('alvoId') alvoId: string
+  ) {
+    return this.solicitacoesService.desconfirmarSolicitacao(+solicitanteId, +alvoId);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.solicitacoesService.remove(+id);

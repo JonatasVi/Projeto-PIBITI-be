@@ -46,7 +46,6 @@ export class SolicitacoesService {
   }
 
   async buscarContatos(id: number){
-
     return this.prisma.solicitacao.findMany({
       where: {
         status: 'Aceita'
@@ -61,6 +60,19 @@ export class SolicitacoesService {
             email: true
           }
         }
+      },
+    });
+  }
+
+  async desconfirmarSolicitacao(usuarioIdSolicitante: number, usuarioIdAlvo: number) {
+    return this.prisma.solicitacao.updateMany({
+      where: {
+        usuarioId_solicitante: usuarioIdSolicitante,
+        usuarioId_alvo: usuarioIdAlvo,
+        status: 'Aceita',
+      },
+      data: {
+        status: 'Rejeitada',
       },
     });
   }
