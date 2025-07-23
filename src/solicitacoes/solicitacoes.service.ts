@@ -45,24 +45,38 @@ export class SolicitacoesService {
     })
   }
 
-  async buscarContatos(id: number){
+  async buscarContatos(id: number) {
     return this.prisma.solicitacao.findMany({
       where: {
-        status: 'Aceita'
+        status: 'Aceita',
+        OR: [
+          { usuarioId_solicitante: id },
+          { usuarioId_alvo: id }
+        ]
       },
-      select: {
+      include: {
         usuarioSolicitante: {
           select: {
             id: true,
             nome: true,
             cargo: true,
             instituicao: true,
-            email: true
+            email: true,
+          }
+        },
+        usuarioAlvo: {
+          select: {
+            id: true,
+            nome: true,
+            cargo: true,
+            instituicao: true,
+            email: true,
           }
         }
-      },
+      }
     });
   }
+
 
   async desconfirmarSolicitacao(usuarioIdSolicitante: number, usuarioIdAlvo: number) {
     return this.prisma.solicitacao.updateMany({
