@@ -54,7 +54,7 @@ export class AutorizacoesService {
         nome: usuario.nome,
         email: usuario.email,
         senha: hashPassword,
-        cargo: usuario.cargo,
+        cargo: usuario.cargo
       }
     });
   }
@@ -68,6 +68,7 @@ export class AutorizacoesService {
         email: true,
         senha: true,
         cargo: true,
+        telefone: true,
         instituicao: true,
         instituicaoId: true,
         aceitaPerto: true,
