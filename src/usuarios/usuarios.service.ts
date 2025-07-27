@@ -59,11 +59,11 @@ export class UsuariosService {
       delete updateUserDto.senha;
     }
 
-    const instituicaoDestinot = updateUserDto.instituicaoDestino;
+    const instituicaoDestinoUsuario = updateUserDto.instituicaoDestino;
 
     // Se uma nova lista de instituições de destino foi enviada,
     // remove as antigas primeiro.
-    if(instituicaoDestinot != undefined){
+    if(instituicaoDestinoUsuario != undefined){
       await this.prisma.instituicaoDestino.deleteMany({
         where: {
           usuarioId: id
@@ -77,8 +77,8 @@ export class UsuariosService {
       data: {
         ...updateUserDto,
         // Apenas tenta criar o relacionamento se a lista `instituicaoDestinot` for fornecida
-        instituicaoDestino: instituicaoDestinot ? { 
-          create: instituicaoDestinot.map(id => ({
+        instituicaoDestino: instituicaoDestinoUsuario ? {
+          create: instituicaoDestinoUsuario.map(id => ({
             instituicao: {
               connect: { id }
             }

@@ -38,13 +38,13 @@ export class PermutacoesService {
             instituicaoId: usuarioId.instituicaoId
           }
         },
+        cargo: usuarioId.cargo,
         NOT: {
           id: id
         }
       },
       select:{
 			id: true,
-			nome: true,
 			instituicao: true
 		}
     });
