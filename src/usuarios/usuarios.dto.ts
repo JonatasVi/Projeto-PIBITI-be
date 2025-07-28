@@ -52,8 +52,12 @@ export class CreateUserDto {
     aceitaPerto: boolean
     
     @IsOptional()
-	 @IsString()
-	 perfilimage?: string;
+    @IsString()
+    perfilimage?: string;
+
+    @IsOptional()
+    @IsString()
+    telefone?: string
 
 }
 
