@@ -62,6 +62,7 @@ export class SolicitacoesService {
             cargo: true,
             instituicao: true,
             email: true,
+            telefone: true,
           }
         },
         usuarioAlvo: {
@@ -71,6 +72,7 @@ export class SolicitacoesService {
             cargo: true,
             instituicao: true,
             email: true,
+            telefone: true,
           }
         }
       }

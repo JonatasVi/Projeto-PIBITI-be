@@ -36,7 +36,6 @@ export class UsuariosService {
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<usuario | null> {
     
-    // Validação de e-mail duplicado
     if (updateUserDto.email) {
       const userWithSameEmail = await this.prisma.usuario.findUnique({
         where: { email: updateUserDto.email },
@@ -47,22 +46,15 @@ export class UsuariosService {
       }
     }
 
-    // ✨ CORREÇÃO PRINCIPAL ✨
-    // Verifica se a senha foi enviada E se ela não é uma string vazia.
     if (updateUserDto.senha && updateUserDto.senha.trim() !== '') {
-      // Se a senha for válida, criptografa.
       const salt = await bcrypt.genSalt();
       updateUserDto.senha = await bcrypt.hash(updateUserDto.senha, salt);
     } else {
-      // Se a senha for vazia, nula ou undefined, REMOVE a propriedade do objeto.
-      // Isso impede que o Prisma tente atualizar a senha para um valor vazio.
       delete updateUserDto.senha;
     }
 
     const instituicaoDestinoUsuario = updateUserDto.instituicaoDestino;
 
-    // Se uma nova lista de instituições de destino foi enviada,
-    // remove as antigas primeiro.
     if(instituicaoDestinoUsuario != undefined){
       await this.prisma.instituicaoDestino.deleteMany({
         where: {
@@ -71,19 +63,17 @@ export class UsuariosService {
       })
     }
     
-    // Atualiza o usuário no banco de dados
     return this.prisma.usuario.update({
       where: { id },
       data: {
         ...updateUserDto,
-        // Apenas tenta criar o relacionamento se a lista `instituicaoDestinot` for fornecida
         instituicaoDestino: instituicaoDestinoUsuario ? {
           create: instituicaoDestinoUsuario.map(id => ({
             instituicao: {
               connect: { id }
             }
           }))
-        } : undefined // Se não for fornecida, não faz nada com o relacionamento
+        } : undefined
       }
     });
   }
