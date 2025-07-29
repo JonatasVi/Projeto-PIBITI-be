@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { CreateSolicitacoeDto, UpdateSolicitacoeDto } from './solicitacoes.dto';
 import { PrismaService } from 'src/database/prisma.service';
 import { solicitacao, usuario } from '@prisma/client';
@@ -7,13 +7,30 @@ import { solicitacao, usuario } from '@prisma/client';
 export class SolicitacoesService {
   constructor(private readonly prisma: PrismaService){}
 
-  create(createSolicitacoeDto: CreateSolicitacoeDto) {
+  async create(createSolicitacoeDto: CreateSolicitacoeDto) {
+	 const solicitacaoExistente = await this.prisma.solicitacao.findMany({
+		  where: {
+			  OR:[
+				{status: "Pendente"},
+				{status: "Aceita"},
+				{usuarioId_solicitante: createSolicitacoeDto.usuarioId_solicitante},
+				{usuarioId_alvo: createSolicitacoeDto.usuarioId_alvo},
+				{usuarioId_solicitante: createSolicitacoeDto.usuarioId_alvo},
+				{usuarioId_alvo: createSolicitacoeDto.usuarioId_solicitante}
+			  ]
+		  }
+		  });
+		  
+	if(solicitacaoExistente.length!=0){
+		throw new ConflictException('Ja existe uma solicitacao para esse usuario');
+	}
+		
     return this.prisma.solicitacao.create({
       data: createSolicitacoeDto
     });
   }
 
-  findAll() {
+  async findAll() {
     return this.prisma.solicitacao.findMany();
   }
 
@@ -93,7 +110,7 @@ export class SolicitacoesService {
     });
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return this.prisma.solicitacao.delete({
       where: {id}
     });
