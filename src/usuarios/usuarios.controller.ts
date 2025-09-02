@@ -4,7 +4,6 @@ import {
   Put,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
@@ -24,7 +23,6 @@ import { Response } from 'express';
 import { memoryStorage } from 'multer';
 import { usuario } from '@prisma/client';
 import { JwtAuthGuard } from '../autorizacoes/jwt-auth.guard';
-
 import * as fs from 'fs';
 import * as path from 'path';
 

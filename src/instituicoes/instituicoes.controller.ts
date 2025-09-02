@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { InstituicoesService } from './instituicoes.service';
-import { CreateInstitutionDto, UpdateInstitutionDto } from './instituicoes.dto';
-import { instituicao, usuario } from '@prisma/client';
+import { CreateInstitutionDto } from './instituicoes.dto';
+import { instituicao } from '@prisma/client';
 import { JwtAuthGuard } from '../autorizacoes/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 

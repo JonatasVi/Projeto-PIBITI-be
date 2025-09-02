@@ -4,8 +4,7 @@ import { AutorizacoesController } from './auths.controller';
 import { UsuariosModule } from 'src/usuarios/usuarios.module';
 import { UsuariosService } from 'src/usuarios/usuarios.service';
 import { PrismaService } from 'src/database/prisma.service';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { AuthsGuard } from './auths.guard';
+import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy'; 
 
 @Module({
@@ -17,11 +16,9 @@ import { JwtStrategy } from './jwt.strategy';
   controllers: [AutorizacoesController],
   providers: [
     AutorizacoesService,
-    AuthsGuard,
     UsuariosService,
     PrismaService,
     JwtStrategy
   ],
-  exports: [AuthsGuard]
 })
 export class AutorizacoesModule {}

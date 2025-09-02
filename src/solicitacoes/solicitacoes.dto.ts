@@ -1,7 +1,5 @@
-import { IsEnum, IsNumber } from 'class-validator';
+import {  IsNumber } from 'class-validator';
 import { PartialType } from '@nestjs/swagger';
-
-enum status { Pendente, Aceita, Rejeitada }
 
 export class CreateSolicitacoeDto {
 

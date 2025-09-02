@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import {IsString, IsEmail, MinLength, IsArray, IsNumber, IsOptional, IsBoolean } from 'class-validator'
+import {IsString, IsEmail, MinLength, IsArray, IsNumber, IsOptional } from 'class-validator'
 import { PartialType } from '@nestjs/mapped-types';
 
 export class CreateUserDto {

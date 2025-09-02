@@ -2,7 +2,6 @@ import { Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { CreateInstitutionDto, UpdateInstitutionDto } from './instituicoes.dto';
 import { PrismaService } from 'src/database/prisma.service';
 import { instituicao } from '@prisma/client';
-import { AuthsGuard } from 'src/autorizacoes/auths.guard';
 
 @Injectable()
 export class InstituicoesService {

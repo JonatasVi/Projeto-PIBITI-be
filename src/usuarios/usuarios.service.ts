@@ -1,8 +1,7 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { CreateUserDto, UpdateUserDto } from './usuarios.dto';
+import { ConflictException, Injectable } from '@nestjs/common';
+import { UpdateUserDto } from './usuarios.dto';
 import { PrismaService } from 'src/database/prisma.service';
-import { usuario, instituicaoDestino } from '@prisma/client';
-import { Response } from 'express';
+import { usuario } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()

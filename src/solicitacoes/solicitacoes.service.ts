@@ -1,7 +1,6 @@
 import { Injectable, ConflictException } from '@nestjs/common';
 import { CreateSolicitacoeDto, UpdateSolicitacoeDto } from './solicitacoes.dto';
 import { PrismaService } from 'src/database/prisma.service';
-import { solicitacao, usuario } from '@prisma/client';
 
 @Injectable()
 export class SolicitacoesService {
