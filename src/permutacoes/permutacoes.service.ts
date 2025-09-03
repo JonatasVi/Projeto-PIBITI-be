@@ -5,7 +5,6 @@ import { PrismaService } from 'src/database/prisma.service';
 
 export class PermutacoesService {
   constructor(private readonly prisma: PrismaService){}
-
   
   async permutacaoUsuario(id: number) {
     const usuarioId = await this.prisma.usuario.findUnique({

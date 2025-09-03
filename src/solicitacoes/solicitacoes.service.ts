@@ -24,13 +24,9 @@ export class SolicitacoesService {
 		throw new ConflictException('Ja existe uma solicitacao para esse usuario');
 	}
 		
-    return this.prisma.solicitacao.create({
+  return this.prisma.solicitacao.create({
       data: createSolicitacoeDto
     });
-  }
-
-  async findAll() {
-    return this.prisma.solicitacao.findMany();
   }
 
   async solicitacoesPendentes(id: number) {

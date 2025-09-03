@@ -10,8 +10,8 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
-    .setTitle('PIBITI')
-    .setDescription('Descrição da API do projeto PIBIT')
+    .setTitle('PIBITI - Plataforma de Permutação ')
+    .setDescription('Documentação feita com o proposito de facilitar a testagem da API')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

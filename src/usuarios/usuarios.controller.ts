@@ -25,6 +25,7 @@ import { usuario } from '@prisma/client';
 import { JwtAuthGuard } from '../autorizacoes/jwt-auth.guard';
 import * as fs from 'fs';
 import * as path from 'path';
+import { ApiOperation } from '@nestjs/swagger';
 
 @Controller('usuarios')
 @ApiBearerAuth()
@@ -32,31 +33,37 @@ import * as path from 'path';
 export class UsuariosController {
   constructor(private readonly usersService: UsuariosService) {}
 
+  @ApiOperation({ summary: 'Obtém todos os usuários' })
   @Get()
   findAll() {
     return this.usersService.findAll();
   }
 
+  @ApiOperation({ summary: 'Obtém um usuário pelo id' })
   @Get(':id')
   findOne(@Param('id') id: string): Promise<usuario | null> {
     return this.usersService.findOne(+id);
   }
 
+  @ApiOperation({ summary: 'Atualiza um usuário pelo id' })
   @Put(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
   }
 
+  @ApiOperation({ summary: 'Busca um usuário pelo email' })
   @Get('email/:email')
   buscarEmail(@Param('email') email: string): Promise<usuario | null> {
     return this.usersService.buscarEmail(email);
   }
 
+  @ApiOperation({ summary: 'Exclui um usuário pelo id' })
   @Delete(':id')
   remove(@Param('id') id: string): Promise<usuario> {
     return this.usersService.remover(+id);
   }
 
+  @ApiOperation({ summary: 'Para fazer o upload da imagem de perfil' })
   @Post(':id/upload')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -83,6 +90,8 @@ export class UsuariosController {
     return { message: 'Imagem enviada com sucesso!' };
   }
 
+
+  @ApiOperation({ summary: 'Obtém a foto de perfil do usuário' })
   @Get(':id/foto')
   async getImagem(
     @Param('id', ParseIntPipe) id: number,

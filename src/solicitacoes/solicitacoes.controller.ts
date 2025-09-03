@@ -1,36 +1,38 @@
 import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
 import { SolicitacoesService } from './solicitacoes.service';
 import { CreateSolicitacoeDto, UpdateSolicitacoeDto } from './solicitacoes.dto';
+import { ApiOperation } from '@nestjs/swagger';
 
 @Controller('solicitacoes')
 export class SolicitacoesController {
   constructor(private readonly solicitacoesService: SolicitacoesService) {}
 
+  @ApiOperation({ summary: 'Cria uma solicitação' })
   @Post()
   create(@Body() createSolicitacoeDto: CreateSolicitacoeDto) {
     return this.solicitacoesService.create(createSolicitacoeDto);
   }
 
-  @Get()
-  findAll() {
-    return this.solicitacoesService.findAll();
-  }
-  status
+  @ApiOperation({ summary: 'Obtém todas as solicitações pendentes do usuario' })
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  buscarPendentes(@Param('id') id: string) {
     return this.solicitacoesService.solicitacoesPendentes(+id);
   }
 
+  @ApiOperation({ summary: 'Obtém todos os contatos do usuários(solicitações aceitas)' })
   @Get('/contatos/:id')
   buscarContatos(@Param('id') id: string) {
     return this.solicitacoesService.buscarContatos(+id);
   }
 
+
+  @ApiOperation({ summary: 'Atualiza uma solicitação' })
   @Put(':id')
   update(@Param('id') id: string, @Body() updateSolicitacoeDto: UpdateSolicitacoeDto) {
     return this.solicitacoesService.update(+id, updateSolicitacoeDto);
   }
 
+  @ApiOperation({ summary: 'desconfirmar uma solicitação' })
   @Put('/desconfirmar/:solicitanteId/:alvoId')
   desconfirmar(
     @Param('solicitanteId') solicitanteId: string,
@@ -39,6 +41,7 @@ export class SolicitacoesController {
     return this.solicitacoesService.desconfirmarSolicitacao(+solicitanteId, +alvoId);
   }
 
+  @ApiOperation({ summary: 'Exclui uma solicitação' })
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.solicitacoesService.remove(+id);
