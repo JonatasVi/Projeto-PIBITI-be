@@ -8,31 +8,30 @@ datasource db {
 }
 
 model usuario {
-  id               Int                  @id @default(autoincrement())
-  nome             String
-  email            String               @unique
-  senha            String
-  cargo            String
-  telefone         String?
-  instituicaoId Int?
-  instituicao	 instituicao? @relation(fields: [instituicaoId], references: [id])
-  aceitaPerto      Boolean?
-  createdAt        DateTime             @default(now())
-  updatedAt        DateTime             @updatedAt
-  instituicaoDestino      instituicaoDestino[]
-  imagePerfil Bytes?
-  solicitacaoSolicitante solicitacao[] @relation("solicitacaoSolicitante")
-  solicitacaoAlvo solicitacao[]     @relation("solicitacaoAlvo")
-
-  }
+  id                   Int                   @id @default(autoincrement())
+  nome                 String
+  email                String                @unique
+  senha                String
+  cargo                String
+  telefone             String?
+  instituicaoId        Int?
+  instituicao          instituicao?          @relation(fields: [instituicaoId], references: [id])
+  aceitaPerto          Boolean?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  instituicaoDestino   instituicaoDestino[]
+  imagePerfil          Bytes?
+  solicitacaoSolicitante solicitacao[]         @relation("solicitacaoSolicitante")
+  solicitacaoAlvo      solicitacao[]         @relation("solicitacaoAlvo")
+}
 
 model instituicao {
-  id        Int                  @id 
-  nome      String?
+  id      Int                  @id
+  nome    String?
   municipio String?
-  uf        String?
-  sigla     String?
-  usuario   instituicaoDestino[]
+  uf      String?
+  sigla   String?
+  usuario instituicaoDestino[]
   usuarios usuario[]
 }
 
@@ -40,22 +39,22 @@ model instituicaoDestino {
   usuarioId     Int
   instituicaoId Int
   instituicao   instituicao? @relation(fields: [instituicaoId], references: [id])
-  usuario       usuario     @relation(fields: [usuarioId], references: [id])
+  usuario       usuario      @relation(fields: [usuarioId], references: [id])
+
   @@id([usuarioId, instituicaoId])
 }
 
-
-model solicitacao{
-  id Int    @id @default(autoincrement())
-  status status? @default(Pendente)
-  createdAt        DateTime             @default(now())
-  usuarioSolicitante       usuario     @relation("solicitacaoSolicitante",fields: [usuarioId_solicitante], references: [id])
+model solicitacao {
+  id                    Int      @id @default(autoincrement())
+  status                status   @default(Pendente)
+  createdAt             DateTime @default(now())
+  usuarioSolicitante    usuario  @relation("solicitacaoSolicitante", fields: [usuarioId_solicitante], references: [id])
   usuarioId_solicitante Int
-  usuarioAlvo       usuario     @relation("solicitacaoAlvo",fields: [usuarioId_alvo], references: [id])
-  usuarioId_alvo Int
+  usuarioAlvo           usuario  @relation("solicitacaoAlvo", fields: [usuarioId_alvo], references: [id])
+  usuarioId_alvo        Int
 }
 
-enum status{
+enum status {
   Pendente
   Aceita
   Rejeitada

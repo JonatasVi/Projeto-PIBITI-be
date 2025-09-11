@@ -7,31 +7,37 @@ export class SolicitacoesService {
   constructor(private readonly prisma: PrismaService){}
 
   async create(createSolicitacoeDto: CreateSolicitacoeDto) {
-	 const solicitacaoExistente = await this.prisma.solicitacao.findMany({
-		  where: {
-			  OR:[
-				{status: "Pendente"},
-				{status: "Aceita"},
-				{usuarioId_solicitante: createSolicitacoeDto.usuarioId_solicitante},
-				{usuarioId_alvo: createSolicitacoeDto.usuarioId_alvo},
-				{usuarioId_solicitante: createSolicitacoeDto.usuarioId_alvo},
-				{usuarioId_alvo: createSolicitacoeDto.usuarioId_solicitante}
-			  ]
-		  }
-		  });
-		  
-	if(solicitacaoExistente.length!=0){
-		throw new ConflictException('Ja existe uma solicitacao para esse usuario');
-	}
-		
-  return this.prisma.solicitacao.create({
-      data: createSolicitacoeDto
+    const solicitacaoExistente = await this.prisma.solicitacao.findFirst({
+      where: {
+        OR: [
+          {
+            usuarioId_solicitante: createSolicitacoeDto.usuarioId_solicitante,
+            usuarioId_alvo: createSolicitacoeDto.usuarioId_alvo,
+            status: { in: ['Pendente', 'Aceita'] }
+          },
+          {
+            usuarioId_solicitante: createSolicitacoeDto.usuarioId_alvo,
+            usuarioId_alvo: createSolicitacoeDto.usuarioId_solicitante,
+            status: { in: ['Pendente', 'Aceita'] }
+          }
+        ]
+      }
+    });
+    
+    if (solicitacaoExistente) {
+      throw new ConflictException('Já existe uma solicitação ativa entre esses usuários');
+    }
+    
+    return this.prisma.solicitacao.create({
+      data: {
+        ...createSolicitacoeDto,
+        status: 'Pendente'
+      }
     });
   }
 
   async solicitacoesPendentes(id: number) {
-
-    return  this.prisma.solicitacao.findMany({
+    return this.prisma.solicitacao.findMany({
       where: {
         status: 'Pendente',
         usuarioId_alvo: id,
@@ -90,7 +96,6 @@ export class SolicitacoesService {
       }
     });
   }
-
 
   async desconfirmarSolicitacao(usuarioIdSolicitante: number, usuarioIdAlvo: number) {
     return this.prisma.solicitacao.updateMany({
