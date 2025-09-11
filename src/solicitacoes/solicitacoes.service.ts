@@ -115,4 +115,22 @@ export class SolicitacoesService {
       where: {id}
     });
   }
+
+  async removerContato(usuario1Id: number, usuario2Id: number) {
+    return this.prisma.solicitacao.deleteMany({
+      where: {
+        status: 'Aceita',
+        OR: [
+          {
+            usuarioId_solicitante: usuario1Id,
+            usuarioId_alvo: usuario2Id
+          },
+          {
+            usuarioId_solicitante: usuario2Id,
+            usuarioId_alvo: usuario1Id
+          }
+        ]
+      }
+    });
+  }
 }
