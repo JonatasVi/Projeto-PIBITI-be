@@ -46,4 +46,13 @@ export class SolicitacoesController {
   remove(@Param('id') id: string) {
     return this.solicitacoesService.remove(+id);
   }
+
+  @ApiOperation({ summary: 'Excluir um contato (remover conexão entre usuários)' })
+  @Delete('/contato/:usuario1Id/:usuario2Id')
+  async removerContato(
+    @Param('usuario1Id') usuario1Id: string,
+    @Param('usuario2Id') usuario2Id: string
+  ) {
+    return this.solicitacoesService.removerContato(+usuario1Id, +usuario2Id);
+  }
 }
