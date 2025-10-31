@@ -77,19 +77,18 @@ export class UsuariosService {
     });
   }
 
-
   async remover(id: number): Promise<usuario> {
     return this.prisma.usuario.delete({
       where: {id}
     });
   }
 
-
   async uploadProfileImage(userId: number, imageBuffer: Buffer) {
+    const image  = Buffer.from(imageBuffer)
     return this.prisma.usuario.update({
       where: { id: userId },
       data: {
-        imagePerfil: imageBuffer,
+        imagePerfil: image, 
       },
     });
   }
