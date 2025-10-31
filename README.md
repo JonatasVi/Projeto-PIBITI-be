@@ -9,13 +9,13 @@ Sendo desenvolvido com:
 - TypeScript
 - PostgreSQL
 
-## Project setup
+## Instalação dos pacotes e suas dependências
 
 ```bash
 $ npm install
 ```
 
-## Compile and run the project
+## Compilar e rodar o projeto
 
 ```bash
 # development
@@ -28,15 +28,4 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Run tests
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
