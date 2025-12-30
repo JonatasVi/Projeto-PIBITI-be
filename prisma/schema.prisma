@@ -23,6 +23,8 @@ model usuario {
   imagePerfil          Bytes?
   solicitacaoSolicitante solicitacao[]         @relation("solicitacaoSolicitante")
   solicitacaoAlvo      solicitacao[]         @relation("solicitacaoAlvo")
+  topicos topico[]
+  comentarios comentario[]
 }
 
 model instituicao {
@@ -59,3 +61,29 @@ enum status {
   Aceita
   Rejeitada
 }
+
+model topico {
+  id Int @id @default(autoincrement())
+  nome String
+  comentarios comentario[]
+  categoria String
+  createdAt            DateTime              @default(now())
+  id_usuario Int
+  usuario       usuario      @relation(fields: [id_usuario], references: [id])
+}
+
+
+model comentario{
+  id Int @id @default(autoincrement())
+  id_usuario Int
+  usuario       usuario      @relation(fields: [id_usuario], references: [id])
+  descricao String
+  topico topico @relation(fields:[id_topico], references: [id], onDelete: Cascade)
+  id_topico Int
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @default(now ())
+}
+
+
+
+
