@@ -5,10 +5,11 @@ import { AutorizacoesModule } from './autorizacoes/auths.module';
 import { InstituicoesModule } from './instituicoes/instituicoes.module';
 import { PermutacoesModule } from './permutacoes/permutacoes.module';
 import { SolicitacoesModule } from './solicitacoes/solicitacoes.module';
+import { ForunsModule } from './foruns/foruns.module';
 
 
 @Module({
-  imports: [UsuariosModule, AutorizacoesModule, InstituicoesModule, PermutacoesModule, SolicitacoesModule],
+  imports: [UsuariosModule,ForunsModule, AutorizacoesModule, InstituicoesModule, PermutacoesModule, SolicitacoesModule, ForunsModule],
   providers: [PrismaService],
 })
 export class AppModule {}

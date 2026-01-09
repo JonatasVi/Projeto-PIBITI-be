@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import { Controller, UseGuards, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
 import { SolicitacoesService } from './solicitacoes.service';
 import { CreateSolicitacoeDto, UpdateSolicitacoeDto } from './solicitacoes.dto';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard,  } from '../autorizacoes/jwt-auth.guard';
 
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('solicitacoes')
 export class SolicitacoesController {
   constructor(private readonly solicitacoesService: SolicitacoesService) {}
